@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pi Ecosystem</title>
+  <style>
+   * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #6A1B9A;
+      padding: 10px 15px;
+      color: #fff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .back-btn,
+    .dropdown-btn {
+      font-size: 20px;
+      background: none;
+      border: none;
+      color: #fff;
+    }
+
+    .top-title {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .welcome-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #f7a600;
+      gap: 10px;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+
+    .pi-logo {
+      width: 80px;
+      height: 80px;
+    }
+
+    .apps-section {
+      padding: 0 20px;
+    }
+
+    .apps-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .apps-header h3 {
+      font-size: 18px;
+      color: #222;
+    }
+
+    .toggle-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: none;
+      color: #6A1B9A;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding-bottom: 60px;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      max-height: 1000px;
+    }
+
+    .apps-grid.collapsed {
+      max-height: 0;
+      padding-bottom: 0;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .icon-box {
+      width: 70px;
+      height: 70px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .icon-box:hover {
+      transform: scale(1.05);
+    }
+
+    .app span {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      z-index: 1000;
+    }
+
+    .bottom-nav a.nav-item {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #6A1B9A;
+      font-size: 12px;
+      flex: 1;
+    }
+
+    .bottom-nav a.nav-item.active {
+      color: #f7a600;
+    }
+
+    .bottom-nav a.nav-item i {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .third-party-section {
+      padding: 0px;
+      transition: all 0.5s ease;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #222;
+    }
+
+    .third-party-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 20px 0;
+      width: 90vw;
+      max-width: 90vw;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .card-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #fff8e1;
+      color: #d19c00;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid #f7d57e;
+    }
+
+    .card-body {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .app-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 30%;
+    }
+
+    .card-text h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .card-text p {
+      margin: 0;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .card-text {
+      flex-grow: 1;
+    }
+
+    .card-stats {
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .card-stats .rank {
+      font-weight: bold;
+      display: block;
+    }
+
+    .score {
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 14px;
+      border: 1.5px solid #4caf50;
+      padding: 6px 10px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #4caf50;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .page {
+      font-family: 'Inter', sans-serif;
+      color: #222;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .timestamp {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .explore {
+      font-size: 16px;
+      color: #6A1B9A;
+      font-weight: 600;
+      margin-bottom: 40px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      padding: 30px 20px;
+      max-width: 500px;
+      margin: 0 auto 50px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .manage-account {
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+ .bottom-nav {    
+  position: fixed;    
+  bottom: 0;    
+  left: 0;    
+  right: 0;    
+  background-color: #fff;    
+  border-top: 1px solid #ccc;    
+  display: flex;    
+  justify-content: space-around;    
+  padding: 10px 0;    
+}    
+    
+.nav-item {    
+  display: flex;    
+  flex-direction: column;    
+  align-items: center;    
+  color: #6A1B9A;    
+  font-size: 12px;    
+}    
+    
+.nav-item i {            
+}    
+    
+.nav-item.active {    
+  color: #f7a600;    
+}    
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <header class="top-bar">
+    <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+</svg></button>
+    <div class="top-title">
+      <span>Home</span>
+      <img src="Pi pic.png" alt="Pi Logo" class="fa-brands fa-pied-piper-alt" style="height: 30px; width: 30px;"/>
+    </div>
+    <button class="dropdown-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+</svg></button>
+  </header>
+
+  <main style="margin-top: 15%;">
+    <div class="welcome-section">
+      <img src="Pi pic.png" alt="Pi Logo" class="pi-logo"/>
+      <h2>Welcome to the Pi Ecosystem</h2>
+    </div>
+
+    <section class="apps-section">
+      <div class="apps-header">
+        <h3 style="margin-bottom: 50px;">Core Team Apps</h3>
+        <button class="toggle-btn" onclick="toggleApps()" style="margin-bottom: 50px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
+</svg></button>
+      </div>
+
+      <div class="apps-grid" id="appsGrid">
+        <div class="app">
+        <a href="https://fireside.pinet.com/onboarding" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 1.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Fireside</span>
+        </div>
+        <div class="app">
+           <a href="wallet.html" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%; margin-top: 5%;" src="Main 2.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Wallet</span>
+        </div>
+        <div class="app">
+           <a href="https://brainstorm.pinet.com" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 3.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Brainstorm</span>
+        </div>
+        <div class="app">
+           <a href="https://mine.pinet.com" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 4.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Mine</span>
+        </div>
+        <div class="app">
+      <a href="https://blockexplorer.minepi.com/mainnet" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 5.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Blockchain</span>
+        </div>
+        <div class="app">
+           <a href="https://develop.pinet.com" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 6.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Develop</span>
+        </div>
+        <div class="app">
+      <a href="https://kyc.pinet.com/user/see-you-soon" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 7.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>KYC</span>
+        </div>
+        <div class="app">
+           <a href="https://chat.pinet.com/home" style="cursor: none;"><div class="icon-box"><img style="width: 115%; height: 115%;" src="Main 8.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Chat</span>
+        </div>
+        <div class="app">
+           <a href="https://profiles.pinet.com/profiles" style="cursor: none;"><div class="icon-box"><img style="width: 120%; height: 120%;" src="Main 9.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Profiles</span>
+        </div>
+        <div class="app">
+           <a href="https://domains.pinet.com" style="cursor: none;"><div class="icon-box"><img style="width: 110%; height: 110%;" src="Main 10.png" alt="Pi Logo" class="pi-logo"/></div></a><span>Domains</span>
+        </div>
+        <div class="app">
+           <a href="https://appstudio.pinet.com" style="cursor: none;"><div class="icon-box"><img style="width: 110%; height: 110%;" src="Main 11.png" alt="Pi Logo" class="pi-logo"/></div></a><span>App Studio</span>
+        </div>
+         <div class="app">
+           <a href="wallet.html" style="cursor: none;"><div class="icon-box"><img style="width: 110%; height: 110%; margin-top: 5%;" src="Main 12.png" alt="Pi Logo" class="pi-logo"/></div></a>
+          <span>Exchange</span>
+        </div>
+      </div>
+      
+      <div class="third-party-section" id="thirdPartySection">
+  <h3 class="section-title">Explore Third-Party Apps</h3>
+
+  <div class="third-party-card">
+    <div class="card-banner">
+      <img src="pi-world-1.jpg" alt="Pi Earth Banner" />
+    </div>
+    <div class="card-body">
+        <span class="rank" style="color: ;">1</span>
+      <img src="pitogotravel.jpeg" alt="PitoGo Logo" class="app-logo" />
+      <div class="card-text">
+        <h4>Thepitogotravel</h4>
+        <p>Travel the world...</p>
+      </div>
+      <div class="card-stats">
+        <span class="score">
+  <span class="spinner"></span> Pi <i class="fa-solid fa-arrow-up-right"></i>
+</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="third-party-card">
+    <div class="card-banner">
+      <img src="pi-world-2.jpg" alt="Pi Earth Banner" />
+    </div>
+    <div class="card-body">
+        <span class="rank">1</span>
+      <img src="Okx.png" alt="OKX Logo" class="app-logo" />
+      <div class="card-text">
+        <h4>OKX</h4>
+      </div>
+      <div class="card-stats">
+       <span class="score">
+  <span class="spinner"></span> Pi <i class="fa-solid fa-arrow-up-right"></i>
+</span>
+      </div>
+    </div>
+  </div>
+</div>
+    </section>
+  </main>
+
+  <footer class="bottom-nav">
+  <a href="#" class="nav-item active" style="cursor: none;">
+    <i style="font-size: 24px;" class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </a>
+  <a href="https://appstudio.pinet.com" class="nav-item" style="cursor: none;">
+   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+  stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+  <rect x="3" y="3" width="6" height="6" rx="1" ry="1"/>
+  <rect x="3" y="15" width="6" height="6" rx="1" ry="1"/>
+  <rect x="15" y="15" width="6" height="6" rx="1" ry="1"/>
+  <line x1="18" y1="3" x2="18" y2="9"/>
+  <line x1="15" y1="6" x2="21" y2="6"/>
+</svg>
+    <span>PiApps</span>
+  </a>
+  <a href="#" class="nav-item" style="cursor: none;">
+    <i style="font-size: 24px;" class="fa-solid fa-right-left"></i>
+    <span>Services</span>
+  </a>
+</footer>
+
+<div class="page">
+ <div class="timestamp">
+    This data is updated every 15 minutes<br>
+    Last refreshed at: Jun 30 3:48 PM
+  </div>
+
+  <a href="" style="cursor: none;"><div class="explore">Explore More</div></a>
+
+  <div class="title">Bookmarked Apps</div>
+
+  <div class="card">
+    You have not bookmarked any apps, explore the ecosystem and bookmark your favorite apps in their app details page.
+  </div>
+
+  <a href="mine.pinet.com"><div class="manage-account" style="margin-bottom: 30px; cursor: none;">Manage Account</div></a>
+  </div>
+  
+ <script>
+  function toggleApps() {
+    const grid = document.getElementById('appsGrid');
+    const btn = document.querySelector('.toggle-btn');
+
+    const isCollapsed = grid.classList.contains('collapsed');
+
+    if (isCollapsed) {
+      grid.classList.remove('collapsed');
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-chevron-up" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z"/>
+        </svg>`;
+    } else {
+      grid.classList.add('collapsed');
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-chevron-down" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+        </svg>`;
+    }
+  }
+
+  // Optional: expand apps by default
+  window.onload = function () {
+    document.getElementById('appsGrid').classList.remove('collapsed');
+  };
+</script>
+</body>
+</html>
